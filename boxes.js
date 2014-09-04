@@ -34,9 +34,8 @@ var body = document.getElementById("body");
 						//cell.appendChild(document.createTextNode(k + " "));
 						//cell.appendChild(document.createElement("br"));
 						
-						var check = document.createElement("img");
-						check.className = "check";
-						check.src = "images/check.png";
+						var check = document.createElement("div");
+						check.className = "check icheck";
 						cell.appendChild(check);
 						
 						var img = document.createElement("div");

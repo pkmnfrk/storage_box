@@ -1,12 +1,11 @@
 table {
 	border: 3px gray outset;
 	zoom: 2;
+	float: left;
 }
-tr {
-	display:table-row;
-}
+
 td {
-	display:table-cell;
+
 	position:relative;
 	text-align: center;
 	vertical-align: middle;
@@ -53,11 +52,11 @@ td {
 	background: linear-gradient(-45deg, #f88 0%,#88f 100%);
 }
 
-img.check {
+.check {
 	position: absolute;
-	display: none;
-	top: 2px;
-	right: 2px;
+	display: none !important;
+	top: 0px;
+	right: 0px;
 	
 
 }
@@ -71,6 +70,6 @@ img.check {
 }
 
 .gotten .check {
-	display: inline-block;
+	display: inline-block !important;
 	
 }
