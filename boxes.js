@@ -47,6 +47,7 @@ var body = document.getElementById("body");
 						cell.appendChild(img);
 						
 						cell.addEventListener('click', onCellClick);
+						cell.addEventListener('touchend', onCellClick);
 						
 						cell.number = k;
 						
@@ -85,6 +86,7 @@ var body = document.getElementById("body");
 		var lastClick = null;
 		
 		function onCellClick(e) {
+			e.preventDefault();
 			var cell = e.currentTarget;
 			
 			if(lastClick && e.shiftKey) {
@@ -101,7 +103,7 @@ var body = document.getElementById("body");
 			save();
 			
 			//alert(cell.number);
-			return false;
+			
 		}
 		
 		var saving = false;
