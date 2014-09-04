@@ -1,6 +1,6 @@
 table {
 	border: 3px gray outset;
-	zoom: 3;
+	zoom: 2;
 }
 tr {
 	display:table-row;
@@ -10,16 +10,23 @@ td {
 	position:relative;
 	text-align: center;
 	vertical-align: middle;
-	width: 50px;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	margin: 0;
 }
 
 #stats {
+	/*
 	float: right;
 	width: 40%;
-	font-size: 40px;
-	font-family: Verdana, Arial;
 	position: fixed;
 	right: 0;
+	*/
+	width: 600px;
+	font-size: 40px;
+	font-family: Verdana, Arial;
+	
 }
 
 .gen1 {
@@ -55,15 +62,15 @@ img.check {
 
 }
 
-img.pokemon {
+.pokemon {
 	opacity: 0.5;
 }
 
-.gotten img.pokemon {
+.gotten .pokemon {
 	opacity: 1;
 }
 
-.gotten img.check {
+.gotten .check {
 	display: inline-block;
 	
 }

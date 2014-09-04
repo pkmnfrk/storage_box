@@ -39,9 +39,9 @@ var body = document.getElementById("body");
 						check.src = "images/check.png";
 						cell.appendChild(check);
 						
-						var img = document.createElement("img");
-						img.className = "pokemon";
-						img.src = "images/" + pad(k) + "MS.png";
+						var img = document.createElement("div");
+						img.className = "pokemon i" + pad(k) + "MS";
+						//img.src = "images/" + pad(k) + "MS.png";
 					
 						cell.appendChild(img);
 						
