@@ -47,7 +47,7 @@ var body = document.getElementById("body");
 						cell.appendChild(img);
 						
 						cell.addEventListener('click', onCellClick);
-						cell.addEventListener('touchend', onCellClick);
+						//cell.addEventListener('touchend', onCellClick);
 						
 						cell.number = k;
 						
