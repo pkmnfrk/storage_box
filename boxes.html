@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 	<head>
+		<meta name="viewport" content="width=320" />
 		<title>Pok&eacute;mon Boxes</title>
 		<link href="boxes.css" rel="stylesheet" />
 		<link href="images.css" rel="stylesheet" />
@@ -8,7 +9,8 @@
 	<body id="body">
 		<div id="stats">
 			<div id="statText"></div>
-			Save Code: <input id="save" />
+			<a href="#" onclick="document.getElementById('savecode').style.display='block';this.style.display='none';return false;">Save/Load</a>
+			<div id="savecode" style="display:none">Save Code: <input id="save" /></div>
 		</div>
 		<script src="boxes.js"></script>
 	</body>

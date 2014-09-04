@@ -15,7 +15,7 @@ var body = document.getElementById("body");
 			
 			var caption = document.createElement("caption");
 			
-			caption.appendChild(document.createTextNode(i + " - " + (i + 30)));
+			caption.appendChild(document.createTextNode(i + " - " + (i + 29)));
 			
 			table.appendChild(caption);
 			
@@ -46,7 +46,7 @@ var body = document.getElementById("body");
 					
 						cell.appendChild(img);
 						
-						cell.onclick = onCellClick;
+						cell.addEventListener('click', onCellClick);
 						
 						cell.number = k;
 						
@@ -101,6 +101,7 @@ var body = document.getElementById("body");
 			save();
 			
 			//alert(cell.number);
+			return false;
 		}
 		
 		var saving = false;
