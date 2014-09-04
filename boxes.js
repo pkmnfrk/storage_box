@@ -6,6 +6,8 @@ var body = document.getElementById("body");
 		
 		var generation = 0;
 		
+		document.getElementById("save").addEventListener('change',onSaveChanged);
+		
 		load();
 		
 		for(var i = 1; i <= nPokemon; i+=30) {
@@ -101,7 +103,24 @@ var body = document.getElementById("body");
 			//alert(cell.number);
 		}
 		
+		var saving = false;
+		
+		function onSaveChanged() {
+			if(saving) return;
+			
+			var data = document.getElementById("save").value;
+			
+			for(var i = 0; i < nPokemon; i++) {
+				
+				var g = (i < data.length && data[i] == "1") ? true : false;
+				
+				toggleCell(cells[i+1], g);
+				
+			}
+		}
+		
 		function save() {
+			saving = true;
 			var data = JSON.stringify(gotten);
 			
 			localStorage.setItem("gotten", data);
@@ -140,6 +159,7 @@ var body = document.getElementById("body");
 			}
 			
 			stats.innerHTML = statText;
+			saving = false;
 		}
 		
 		function load() {
