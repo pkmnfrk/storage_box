@@ -1,9 +1,10 @@
 CACHE MANIFEST
 
-# Version: 1.0.3
+# Version: 1.1p1
 
 CACHE:
 boxes.js
 boxes.css
 images.css
 images.png
+pokedex.json

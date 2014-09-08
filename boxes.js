@@ -1,77 +1,90 @@
+/*jshint browser:true */
 var body = document.getElementById("body");
-var nPokemon = 719;
-var generations = [151, 251, 386, 493, 649, 719];
+var pokedex;
 var cells = {};
 var gotten = [];
 
 var generation = 0;
 
+var xhr = new XMLHttpRequest();
+xhr.onload = function(x) {
+    
+        pokedex = JSON.parse(xhr.responseText);
+        
+        onStart();
+    
+};
+
+xhr.open("get", "pokedex.json", true);
+xhr.send();
+
 document.getElementById("save").addEventListener('change',onSaveChanged);
+function onStart() {
+    load();
 
-load();
+    for(var i = 0; i < pokedex.pokemon.length; i+=30) {
+        var table = document.createElement("table");
 
-for(var i = 1; i <= nPokemon; i+=30) {
-	var table = document.createElement("table");
-	
-	var caption = document.createElement("caption");
-	
-	caption.appendChild(document.createTextNode(i + " - " + (i + 29)));
-	
-	table.appendChild(caption);
-	
-	for(var j = i; j < i + 30; j += 6) {
-		
-		var row = document.createElement("tr");
-		
-		for(var k = j; k < j + 6; k++) {
-			
-			var cell = document.createElement("td");
-			
-			if(k <= nPokemon) {
-				if(generation < generations.length && k > generations[generation]) {
-					generation++;
-				}
-				
-				cell.className = "gen" + (generation + 1);
-				//cell.appendChild(document.createTextNode(k + " "));
-				//cell.appendChild(document.createElement("br"));
-				
-				var check = document.createElement("div");
-				check.className = "check icheck";
-				cell.appendChild(check);
-				
-				var img = document.createElement("div");
-				img.className = "pokemon i" + pad(k) + "MS";
-				//img.src = "images/" + pad(k) + "MS.png";
-			
-				cell.appendChild(img);
-				
-				cell.addEventListener('click', onCellClick);
-				//cell.addEventListener('touchend', onCellClick);
-				
-				cell.number = k;
-				
-				cells[k] = cell;
-				
-				if(gotten[k]) {
-					cell.className += " gotten";
-				} else {
-					gotten[k] = false;
-				}
-			}
-			
-			row.appendChild(cell);
-			
-		}
-		
-		table.appendChild(row);
-		
-	}
-	
-	body.appendChild(table);
+        var caption = document.createElement("caption");
+
+        caption.appendChild(document.createTextNode((i+1) + " - " + (i + 30)));
+
+        table.appendChild(caption);
+
+        for(var j = i; j < i + 30; j += 6) {
+
+            var row = document.createElement("tr");
+
+            for(var k = j; k < j + 6; k++) {
+
+                var cell = document.createElement("td");
+
+                if(k < pokedex.pokemon.length) {
+                    if(generation < pokedex.pokedexes.length && k > pokedex.pokedexes[generation]) {
+                        generation++;
+                    }
+
+                    cell.className = "gen" + (generation + 1);
+                    //cell.appendChild(document.createTextNode(k + " "));
+                    //cell.appendChild(document.createElement("br"));
+
+                    var check = document.createElement("div");
+                    check.className = "check icheck";
+                    cell.appendChild(check);
+
+                    var img = document.createElement("div");
+                    img.className = "pokemon i" + pad(k + 1) + "MS";
+                    //img.src = "images/" + pad(k) + "MS.png";
+
+                    cell.appendChild(img);
+
+                    cell.addEventListener('click', onCellClick);
+                    //cell.addEventListener('touchend', onCellClick);
+
+                    cell.number = k;
+
+                    cells[k] = cell;
+
+                    if(gotten[k]) {
+                        cell.className += " gotten";
+                    } else {
+                        gotten[k] = false;
+                    }
+                }
+
+                row.appendChild(cell);
+
+            }
+
+            table.appendChild(row);
+
+        }
+
+        body.appendChild(table);
+    }
+
+    save();
 }
-
-save();
 
 function pad(n) {
 	n = "" + n;
@@ -113,14 +126,16 @@ function onSaveChanged() {
 	
 	var data = document.getElementById("save").value;
 	
-	for(var i = 0; i < nPokemon; i++) {
+	for(var i = 0; i < pokedex.pokemon.length; i++) {
 		
 		var g = (i < data.length && data[i] == "1") ? true : false;
 		
-		toggleCell(cells[i+1], g);
+		toggleCell(cells[i], g);
 		
 	}
 }
+
+function returnself(a) { return a; }
 
 function save() {
 	saving = true;
@@ -130,7 +145,7 @@ function save() {
 	
 	var savestring = "";
 	
-	for(var i = 1; i < gotten.length; i++) {
+	for(var i = 0; i < gotten.length; i++) {
 		savestring += gotten[i] ? "1" : "0";
 	}
 	
@@ -139,21 +154,24 @@ function save() {
 	var stats = document.getElementById("statText");
 	
 	var statText = "";
-	statText += "Total Obtained: " + gotten.filter(function(a) { return a; }).length + "/" + (gotten.length - 1) + "<br/>";
+    var glen = gotten.filter(returnself).length;
+	statText += "Total Obtained: " + glen + "/" + (gotten.length - 1) + " (" + Math.round(glen / gotten.length * 100) + "%)<br/>";
 	
+    
+    
 	var from = 0;
 	var to = 0;
-	for(var gen = 0; gen < generations.length; gen++) {
+	for(var gen = 0; gen < pokedex.pokedexes.length; gen++) {
 		from = to + 1;
-		to = generations[gen];
+		to = pokedex.pokedexes[gen];
 		var target = gotten.slice(from, to + 1);
-		var gc = target.filter(function(a) { return a; }).length;
+		glen = target.filter(returnself).length;
 		
 		
 		
-		statText += "Generation " + (gen + 1) + ": " + gc + "/" + target.length;
+		statText += "Generation " + (gen + 1) + ": " + glen + "/" + target.length + " (" + Math.round(glen / target.length * 100) + "%)";
 
-		if(gc == target.length) {
+		if(glen == target.length) {
 			
 		}
 		
