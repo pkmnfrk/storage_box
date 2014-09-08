@@ -49,7 +49,7 @@ function onStart() {
                 var cell = document.createElement("td");
 
                 if(k < pokedex.pokemon.length) {
-                    if(generation < pokedex.pokedexes.length && k > pokedex.pokedexes[generation]) {
+                    if(generation < pokedex.pokedexes.length && k >= pokedex.pokedexes[generation]) {
                         generation++;
                     }
 
@@ -142,6 +142,8 @@ function onSaveChanged() {
 		toggleCell(cells[i], g);
 		
 	}
+    
+    save();
 }
 
 function returnself(a) { return a; }
@@ -169,12 +171,12 @@ function save() {
     
     
 	var from = 0;
-	var to = 0;
+	var to = -1;
     var target;
 	for(var gen = 0; gen < pokedex.pokedexes.length; gen++) {
 		from = to + 1;
 		to = pokedex.pokedexes[gen];
-		target = gotten.slice(from, to + 1);
+		target = gotten.slice(from, to);
 		glen = target.filter(returnself).length;
 		
 		
@@ -244,5 +246,6 @@ function toggleCell(cell, force) {
 		
 function updateSite(event) {
     window.applicationCache.swapCache();
+    window.location = window.location;
 }
 window.applicationCache.addEventListener('updateready', updateSite, false);
