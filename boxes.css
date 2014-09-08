@@ -19,6 +19,10 @@ td {
     font-family: "Helvetica Neue", "Helvetica", sans-serif;
     font-size: 8px;
     overflow: visible;
+    
+    user-select: none;
+    -webkit-user-select:none;
+    
 }
 
 input {
@@ -61,6 +65,10 @@ input {
 
 .gen6 {
 	background: linear-gradient(-45deg, #f88 0%,#88f 100%);
+}
+
+.special {
+	background: linear-gradient(-45deg, #b48400 0%,#ffe8b6 100%) !important;
 }
 
 .check {

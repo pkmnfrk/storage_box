@@ -54,6 +54,10 @@ function onStart() {
                     }
 
                     cell.className = "gen" + (generation + 1);
+                    
+                    if(pokedex.pokemon[k].is_special) {
+                        cell.className += " special";
+                    }
                     //cell.appendChild(document.createTextNode(k + " "));
                     //cell.appendChild(document.createElement("br"));
 
@@ -111,14 +115,18 @@ var lastClick = null;
 
 function onCellClick(e) {
 	e.preventDefault();
+    if (e.stopPropagation)    e.stopPropagation();
+    if (e.cancelBubble!==null) e.cancelBubble = true;
+    e.stopImmediatePropagation();
+    
 	var cell = e.currentTarget;
 	
-	if(lastClick && e.shiftKey) {
+	if(lastClick !== null && e.shiftKey) {
 		var tog = !isGotten(cell);
 		for(var i = Math.min(lastClick, cell.number); i <= Math.max(lastClick, cell.number); i++) {
 			toggleCell(cells[i], tog);
 		}
-		lastClick = null;
+		//lastClick = null;
 	} else {
 		toggleCell(cell);
 		lastClick = cell.number;
@@ -127,7 +135,7 @@ function onCellClick(e) {
 	save();
 	
 	//alert(cell.number);
-	
+	return false;
 }
 
 var saving = false;
@@ -149,6 +157,7 @@ function onSaveChanged() {
 }
 
 function returnself(a) { return a; }
+function notlegendary(a, i) { return !pokedex.pokemon[i].is_special; }
 
 function save() {
 	saving = true;
@@ -167,8 +176,15 @@ function save() {
 	var stats = document.getElementById("statText");
 	
 	var statText = "";
-    var glen = gotten.filter(returnself).length;
-	statText += "Total Obtained: " + glen + "/" + (gotten.length - 1) + " (" + Math.round(glen / gotten.length * 100) + "%)<br/>";
+    var glen = gotten.filter(returnself);
+    var nonlegendary = pokedex.pokemon.filter(function(a) { return !a.is_special; });
+    var llen = glen.filter(notlegendary);
+    
+	statText += "Total Obtained: " + glen.length + "/" + (gotten.length - 1) + " (" + Math.round(glen.length / gotten.length * 100) + "%)";
+    
+    statText += " " + llen.length + "/" + nonlegendary.length + " (" + Math.round(llen.length / nonlegendary.length * 100) + "%)";
+    
+    statText += "<br/>";
 	
     
     
@@ -185,10 +201,6 @@ function save() {
 		
 		statText += "Generation " + (gen + 1) + ": " + glen + "/" + target.length + " (" + Math.round(glen / target.length * 100) + "%)";
 
-		if(glen == target.length) {
-			
-		}
-		
 		statText += "<br/>";
 		
 	}
