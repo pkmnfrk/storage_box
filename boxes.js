@@ -171,10 +171,10 @@ function save() {
     
     
 	var from = 0;
-	var to = -1;
+	var to = 0;
     var target;
 	for(var gen = 0; gen < pokedex.pokedexes.length; gen++) {
-		from = to + 1;
+		from = to;
 		to = pokedex.pokedexes[gen];
 		target = gotten.slice(from, to);
 		glen = target.filter(returnself).length;
