@@ -582,15 +582,18 @@
         },
         {
             "id": 144,
-            "name": "Articuno"
+            "name": "Articuno",
+            "is_special": true
         },
         {
             "id": 145,
-            "name": "Zapdos"
+            "name": "Zapdos",
+            "is_special": true
         },
         {
             "id": 146,
-            "name": "Moltres"
+            "name": "Moltres",
+            "is_special": true
         },
         {
             "id": 147,
@@ -606,11 +609,13 @@
         },
         {
             "id": 150,
-            "name": "Mewtwo"
+            "name": "Mewtwo",
+            "is_special": true
         },
         {
             "id": 151,
-            "name": "Mew"
+            "name": "Mew",
+            "is_special": true
         },
         {
             "id": 152,
@@ -1002,15 +1007,18 @@
         },
         {
             "id": 249,
-            "name": "Lugia"
+            "name": "Lugia",
+            "is_special": true
         },
         {
             "id": 250,
-            "name": "Ho-oh"
+            "name": "Ho-oh",
+            "is_special": true
         },
         {
             "id": 251,
-            "name": "Celebi"
+            "name": "Celebi",
+            "is_special": true
         },
         {
             "id": 252,
@@ -1514,43 +1522,53 @@
         },
         {
             "id": 377,
-            "name": "Regirock"
+            "name": "Regirock",
+            "is_special": true
         },
         {
             "id": 378,
-            "name": "Regice"
+            "name": "Regice",
+            "is_special": true
         },
         {
             "id": 379,
-            "name": "Registeel"
+            "name": "Registeel",
+            "is_special": true
         },
         {
             "id": 380,
-            "name": "Latias"
+            "name": "Latias",
+            "is_special": true
         },
         {
             "id": 381,
-            "name": "Latios"
+            "name": "Latios",
+            "is_special": true
         },
         {
             "id": 382,
-            "name": "Kyogre"
+            "name": "Kyogre",
+            "is_special": true
         },
         {
             "id": 383,
-            "name": "Groudon"
+            "name": "Groudon",
+            "is_special": true
         },
         {
             "id": 384,
-            "name": "Rayquaza"
+            "name": "Rayquaza",
+            "is_special": true
         },
         {
             "id": 385,
-            "name": "Jirachi"
+            "name": "Jirachi",
+            "is_special": true
         },
         {
             "id": 386,
-            "name": "Deoxys"
+            "name": "Deoxys",
+            "is_special": true
         },
         {
             "id": 387,
@@ -1922,67 +1940,83 @@
         },
         {
             "id": 479,
-            "name": "Rotom"
+            "name": "Rotom",
+            "is_special": true
         },
         {
             "id": 480,
-            "name": "Uxie"
+            "name": "Uxie",
+            "is_special": true
         },
         {
             "id": 481,
-            "name": "Mesprit"
+            "name": "Mesprit",
+            "is_special": true
         },
         {
             "id": 482,
-            "name": "Azelf"
+            "name": "Azelf",
+            "is_special": true
         },
         {
             "id": 483,
-            "name": "Dialga"
+            "name": "Dialga",
+            "is_special": true
         },
         {
             "id": 484,
-            "name": "Palkia"
+            "name": "Palkia",
+            "is_special": true
         },
         {
             "id": 485,
-            "name": "Heatran"
+            "name": "Heatran",
+            "is_special": true
         },
         {
             "id": 486,
-            "name": "Regigigas"
+            "name": "Regigigas",
+            "is_special": true
         },
         {
             "id": 487,
-            "name": "Giratina"
+            "name": "Giratina",
+            "is_special": true
         },
         {
             "id": 488,
-            "name": "Cresselia"
+            "name": "Cresselia",
+            "is_special": true
         },
         {
             "id": 489,
-            "name": "Phione"
+            "name": "Phione",
+            "is_special": true
         },
         {
             "id": 490,
-            "name": "Manaphy"
+            "name": "Manaphy",
+            "is_special": true
         },
         {
             "id": 491,
-            "name": "Darkrai"
+            "name": "Darkrai",
+            "is_special": true
         },
         {
             "id": 492,
-            "name": "Shaymin"
+            "name": "Shaymin",
+            "is_special": true
         },
         {
             "id": 493,
-            "name": "Arceus"
+            "name": "Arceus",
+            "is_special": true
         },
         {
             "id": 494,
-            "name": "Victini"
+            "name": "Victini",
+            "is_special": true
         },
         {
             "id": 495,
@@ -2558,51 +2592,63 @@
         },
         {
             "id": 638,
-            "name": "Cobalion"
+            "name": "Cobalion",
+            "is_special": true
         },
         {
             "id": 639,
-            "name": "Terrakion"
+            "name": "Terrakion",
+            "is_special": true
         },
         {
             "id": 640,
-            "name": "Virizion"
+            "name": "Virizion",
+            "is_special": true
         },
         {
             "id": 641,
-            "name": "Tornadus"
+            "name": "Tornadus",
+            "is_special": true
         },
         {
             "id": 642,
-            "name": "Thundurus"
+            "name": "Thundurus",
+            "is_special": true
         },
         {
             "id": 643,
-            "name": "Reshiram"
+            "name": "Reshiram",
+            "is_special": true
         },
         {
             "id": 644,
-            "name": "Zekrom"
+            "name": "Zekrom",
+            "is_special": true
         },
         {
             "id": 645,
-            "name": "Landorus"
+            "name": "Landorus",
+            "is_special": true
         },
         {
             "id": 646,
-            "name": "Kyurem"
+            "name": "Kyurem",
+            "is_special": true
         },
         {
             "id": 647,
-            "name": "Keldeo"
+            "name": "Keldeo",
+            "is_special": true
         },
         {
             "id": 648,
-            "name": "Meloetta"
+            "name": "Meloetta",
+            "is_special": true
         },
         {
             "id": 649,
-            "name": "Genesect"
+            "name": "Genesect",
+            "is_special": true
         },
         {
             "id": 650,
@@ -2870,19 +2916,23 @@
         },
         {
             "id": 716,
-            "name": "Xerneas"
+            "name": "Xerneas",
+            "is_special": true
         },
         {
             "id": 717,
-            "name": "Yveltal"
+            "name": "Yveltal",
+            "is_special": true
         },
         {
             "id": 718,
-            "name": "Zygarde"
+            "name": "Zygarde",
+            "is_special": true
         },
         {
             "id": 719,
-            "name": "Diancie"
+            "name": "Diancie",
+            "is_special": true
         }
     ]
 }
