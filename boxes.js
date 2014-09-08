@@ -214,8 +214,11 @@ function save() {
 
 function load() {
 	var data = localStorage.getItem("gotten");
-	if(data)
+	if(data) {
 		gotten = JSON.parse(data);
+        
+        gotten.length = pokedex.pokemon.length;
+    }
 }
 
 function isGotten(cell) {
