@@ -66,6 +66,8 @@ function onStart() {
                     //img.src = "images/" + pad(k) + "MS.png";
 
                     cell.appendChild(img);
+                    cell.appendChild(document.createElement("br"));
+                    cell.appendChild(document.createTextNode(" " + pokedex.pokemon[k].name));
 
                     cell.addEventListener('click', onCellClick);
                     //cell.addEventListener('touchend', onCellClick);
