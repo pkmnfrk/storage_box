@@ -79,3 +79,7 @@ input {
 	display: inline-block !important;
 	
 }
+
+caption {
+    position:relative;
+}

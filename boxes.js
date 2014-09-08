@@ -3,7 +3,7 @@ var body = document.getElementById("body");
 var pokedex;
 var cells = {};
 var gotten = [];
-
+var boxes = [];
 var generation = 0;
 
 var xhr = new XMLHttpRequest();
@@ -27,9 +27,18 @@ function onStart() {
 
         var caption = document.createElement("caption");
 
-        caption.appendChild(document.createTextNode((i+1) + " - " + (i + 30)));
-
+        caption.appendChild(document.createTextNode((i+1) + " - " + (i + 30) + " "));
+        
+        var check = document.createElement("div");
+        check.className = "check icheck";
+        caption.appendChild(check);
+        
         table.appendChild(caption);
+        table.caption = caption;
+        
+        table.start = i + 1;
+        table.end = i + 30;
+        boxes.push(table);
 
         for(var j = i; j < i + 30; j += 6) {
 
@@ -48,7 +57,7 @@ function onStart() {
                     //cell.appendChild(document.createTextNode(k + " "));
                     //cell.appendChild(document.createElement("br"));
 
-                    var check = document.createElement("div");
+                    check = document.createElement("div");
                     check.className = "check icheck";
                     cell.appendChild(check);
 
@@ -161,10 +170,11 @@ function save() {
     
 	var from = 0;
 	var to = 0;
+    var target;
 	for(var gen = 0; gen < pokedex.pokedexes.length; gen++) {
 		from = to + 1;
 		to = pokedex.pokedexes[gen];
-		var target = gotten.slice(from, to + 1);
+		target = gotten.slice(from, to + 1);
 		glen = target.filter(returnself).length;
 		
 		
@@ -180,6 +190,23 @@ function save() {
 	}
 	
 	stats.innerHTML = statText;
+    
+    for(i = 0; i < boxes.length; i++) {
+        var box = boxes[i];
+        target = gotten.slice(box.start - 1, box.end);
+        for(var j = 0; j < 30; j++) {
+            if(target[j] === false) {
+                target = false;
+                break;
+            }
+        }
+        
+        if(target) {
+            box.caption.className = "gotten";
+        } else {
+            box.caption.className = "";
+        }
+    }
 	saving = false;
 }
 
