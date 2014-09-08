@@ -4,6 +4,7 @@ table {
 	zoom: 1;
 	float: left;
     margin-bottom: 15px;
+    border-collapse: collapse;
 }
 
 td {
