@@ -1,0 +1,20 @@
+{
+  "name": "storage_box",
+  "version": "1.0.0",
+  "description": "",
+  "main": "boxes.js",
+  "private": true,
+  "scripts": {
+    "build": "node getimages.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pkmnfrk/storage_box.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "node-sprite-generator": "^0.10.2"
+  }
+}

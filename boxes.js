@@ -68,7 +68,7 @@ function onStart() {
                     cell.appendChild(check);
 
                     var img = document.createElement("div");
-                    img.className = "pokemon i" + pad(k + 1) + "MS";
+                    img.className = "pokemon pokemoni" + pad(k + 1) + "MS";
                     //img.src = "images/" + pad(k) + "MS.png";
 
                     cell.appendChild(img);
