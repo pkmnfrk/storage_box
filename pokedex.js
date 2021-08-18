@@ -1,4 +1,4 @@
-{
+window.pokedex = {
     "pokedexes": [
         151,
         251,
@@ -2935,4 +2935,4 @@
             "is_special": true
         }
     ]
-}
+};

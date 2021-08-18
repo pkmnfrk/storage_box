@@ -1,22 +1,24 @@
 /*jshint browser:true */
 var body = document.getElementById("body");
-var pokedex;
+//var pokedex;
 var cells = {};
 var gotten = [];
 var boxes = [];
 var generation = 0;
 
-var xhr = new XMLHttpRequest();
-xhr.onload = function(x) {
+// var xhr = new XMLHttpRequest();
+// xhr.onload = function(x) {
     
-        pokedex = JSON.parse(xhr.responseText);
+//         pokedex = JSON.parse(xhr.responseText);
         
-        onStart();
+//         onStart();
     
-};
+// };
 
-xhr.open("get", "pokedex.json", true);
-xhr.send();
+// xhr.open("get", "pokedex.json", true);
+// xhr.send();
+
+// import pokedex from "./pokedex";
 
 document.getElementById("save").addEventListener('change',onSaveChanged);
 function onStart() {
@@ -157,7 +159,8 @@ function onSaveChanged() {
 }
 
 function returnself(a) { return a; }
-function notlegendary(a, i) { return !pokedex.pokemon[i].is_special; }
+function notlegendary(a, i) { return a && !pokedex.pokemon[i].is_special; }
+function notlegendary_q(a) { return !a.is_special; }
 
 function save() {
 	saving = true;
@@ -177,7 +180,7 @@ function save() {
 	
 	var statText = "";
     var glen = gotten.filter(returnself);
-    var nonlegendary = pokedex.pokemon.filter(function(a) { return !a.is_special; });
+    var nonlegendary = pokedex.pokemon.filter(notlegendary_q);
     var llen = glen.filter(notlegendary);
     
 	statText += "Total Obtained: " + glen.length + "/" + (gotten.length - 1) + " (" + Math.round(glen.length / gotten.length * 100) + "%)";
@@ -195,11 +198,13 @@ function save() {
 		from = to;
 		to = pokedex.pokedexes[gen];
 		target = gotten.slice(from, to);
+        nonlegendary = pokedex.pokemon.slice(from, to).filter(notlegendary_q);
 		glen = target.filter(returnself).length;
-		
+        llen = target.filter(notlegendary).length; //this is wrong, need to fix
 		
 		
 		statText += "Generation " + (gen + 1) + ": " + glen + "/" + target.length + " (" + Math.round(glen / target.length * 100) + "%)";
+        statText += " " + llen + "/" + nonlegendary.length + " (" + Math.round(llen / nonlegendary.length * 100) + "%)";
 
 		statText += "<br/>";
 		
@@ -261,8 +266,21 @@ function toggleCell(cell, force) {
 	cell.className = cls.join(" ");
 }
 		
-function updateSite(event) {
-    window.applicationCache.swapCache();
-    window.location = window.location;
+// function updateSite(event) {
+//     window.applicationCache.swapCache();
+//     window.location = window.location;
+// }
+// window.applicationCache.addEventListener('updateready', updateSite, false);
+onStart();
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('worker.js')
+            .then(registration => {
+                console.log('Service Worker is registered', registration);
+            })
+            .catch(err => {
+                console.error('Registration failed:', err);
+            });
+    });
 }
-window.applicationCache.addEventListener('updateready', updateSite, false);
