@@ -3,7 +3,7 @@ self.addEventListener('install', function(event) {
       caches.open('v1').then(function(cache) {
         return cache.addAll(
           [
-            'boxes.html',
+            'index.html',
             'boxes.js',
             'boxes.css',
             'images.css',
