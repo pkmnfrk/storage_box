@@ -60,11 +60,19 @@ input {
 }
 
 .gen5 {
-	background: linear-gradient(-45deg, #444 0%,#fff 100%);
+	background: linear-gradient(-45deg, #888 0%,#fff 100%);
 }
 
 .gen6 {
 	background: linear-gradient(-45deg, #f88 0%,#88f 100%);
+}
+
+.gen7 {
+	background: linear-gradient(-45deg, #a9f 0%,#fa8 100%);
+}
+
+.gen8 {
+	background: linear-gradient(45deg, #f66 0%, #88f 100%);
 }
 
 .special {
