@@ -5,7 +5,8 @@
   "main": "boxes.js",
   "private": true,
   "scripts": {
-    "build": "node getimages.mjs"
+    "build": "node getimages.mjs",
+    "start": "static-server"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,10 @@
   "dependencies": {
     "cli-progress": "^3.11.2",
     "node-fetch": "^3.2.10",
+    "p-limit": "^4.0.0",
     "spritesmith": "^3.4.0"
+  },
+  "devDependencies": {
+    "static-server": "^2.2.1"
   }
 }
