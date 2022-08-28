@@ -5,6 +5,7 @@ import Spritesmith from "spritesmith";
 import pLimit from "p-limit";
 
 const fsp = fs.promises;
+const now = Date.now().toString();
 
 fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.json")
     .then(async (data) => {
@@ -49,7 +50,7 @@ fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.j
         .pokemoni001MS { background-position:-123px -153px; }
         */
         
-        let css = "[class^='pokemon'], [class*=' pokemon'] { background-image:url('./images.png'); width:68px; height:56px; }";
+        let css = `[class^='pokemon'], [class*=' pokemon'] { background-image:url('./images.png?v=${now}'); width:68px; height:56px; }`;
 
         const binary = await new Promise((resolve, reject) => {
             Spritesmith.run({

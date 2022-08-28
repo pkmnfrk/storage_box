@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "build": "node getimages.mjs",
-    "start": "static-server"
+    "start": "static-server",
+    "publish": "node publish && cd dist && aws s3 sync . s3://mcaron-storage-boxes"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "spritesmith": "^3.4.0"
   },
   "devDependencies": {
+    "glob": "^8.0.3",
     "static-server": "^2.2.1"
   }
 }

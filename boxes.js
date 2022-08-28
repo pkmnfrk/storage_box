@@ -272,7 +272,7 @@ function toggleCell(cell, force) {
 // }
 // window.applicationCache.addEventListener('updateready', updateSite, false);
 onStart();
-
+/*
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('worker.js')
@@ -284,3 +284,4 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+*/
