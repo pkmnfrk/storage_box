@@ -5,7 +5,7 @@
   "main": "boxes.js",
   "private": true,
   "scripts": {
-    "build": "node getimages.js"
+    "build": "node getimages.mjs"
   },
   "repository": {
     "type": "git",
@@ -14,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-fetch": "^2.6.1",
-    "node-sprite-generator": "^0.10.2"
+    "cli-progress": "^3.11.2",
+    "node-fetch": "^3.2.10",
+    "spritesmith": "^3.4.0"
   }
 }

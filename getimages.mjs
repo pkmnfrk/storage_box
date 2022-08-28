@@ -1,17 +1,28 @@
-const fetch = require("node-fetch");
-const nsg = require("node-sprite-generator");
-const fs = require("fs");
+import fetch from "node-fetch";
+import fs from "fs";
+import cliProgress from "cli-progress";
+
 const fsp = fs.promises;
 
 fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.json")
     .then(async (data) => {
         const pokedex = await data.json();
+
+        const ids = Object.keys(pokedex).filter((id) => {
+            return parseInt(id, 10) <= 898;
+        }).sort((a, b) => {
+            return parseInt(a, 10) - parseInt(b, 10);
+        });
+
         const fetches = [];
         try {
             await fsp.mkdir("sprites");
         } catch(e) {}
 
-        for(const key of Object.keys(pokedex)) {
+        const bar = new cliProgress.SingleBar({}, cliProgress.Presets.legacy);
+
+        for(const key of ids) {
+
             fetches.push((async () => {
                 const path = `sprites/i${key}MS.png`;
 
@@ -23,12 +34,17 @@ fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.j
                     const result = await fetch(url);
                     const buffer = await result.buffer();
                     await fsp.writeFile(path, buffer);
+                } finally {
+                    bar.increment();
                 }
             })());
         }
-        console.log(fetches.length, "fetches");
+        // console.log(fetches.length, "fetches");
+        bar.start(fetches.length, 0);
         await Promise.all(fetches);
+        bar.stop();
 
+        /*
         await new Promise((resolve, reject) => {
             nsg({
                 src: [
@@ -50,6 +66,7 @@ fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.j
                 return resolve();
             })
         });
+        */
 
         const legendaries = [
             "144-146", 150, 151,
@@ -75,12 +92,11 @@ fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.j
             }
             return false;
         }
-        const ids = Object.keys(pokedex).sort((a, b) => {
-            return parseInt(a, 10) - parseInt(b, 10);
-        });
         
         const newPokedex = {
-            "pokedexes": [151,251,386,493,649,719,809,898],
+            "pokedexes": [151,251,386,493,649,719,809,898].filter((id) => {
+                return ids.indexOf(`${id}`) !== -1
+            }),
             "pokemon": ids.map((id) => {
                 const pokemon = pokedex[id];
                 const numId = parseInt(id, 10);
@@ -92,7 +108,7 @@ fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.j
             }),
         }
 
-        const newPokedexJson = JSON.stringify(newPokedex);
+        const newPokedexJson = JSON.stringify(newPokedex, null, 2);
         await fsp.writeFile("pokedex.js", "window.pokedex=" + newPokedexJson, "utf-8");
 
         console.log("Done!");
