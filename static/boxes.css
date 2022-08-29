@@ -6,13 +6,17 @@ table {
     border-collapse: collapse;
 }
 
+table caption {
+    height: 16px;
+}
+
 td {
 
 	position:relative;
 	text-align: center;
 	vertical-align: middle;
 	width: 68px;
-	height: 56px;
+	height: 90px;
 	padding: 0;
 	margin: 0;
     font-family: "Helvetica Neue", "Helvetica", sans-serif;
@@ -21,6 +25,8 @@ td {
     
     user-select: none;
     -webkit-user-select:none;
+
+    background: linear-gradient(-45deg, #bbb 0%,#eee 100%);
     
 }
 
@@ -79,23 +85,24 @@ input {
 }
 
 .check {
-	position: absolute;
 	display: none !important;
-	top: 0px;
-	right: 0px;
-	
-
+    background-image: url("images/check.png");
+    width: 16px;
+    height: 16px;
+    vertical-align: text-top;
 }
+
+.pokemon, .empty { width: 68px; height: 56px;}
 
 .pokemon {
-	opacity: 0.5;
+	opacity: 0.2;
 }
 
-.gotten .pokemon {
+.gotten > .pokemon {
 	opacity: 1;
 }
 
-.gotten .check {
+table.gotten caption .check, td.gotten > .check {
 	display: inline-block !important;
 	
 }

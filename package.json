@@ -2,27 +2,21 @@
   "name": "storage_box",
   "version": "1.0.0",
   "description": "",
-  "main": "boxes.js",
-  "private": true,
+  "main": "index.js",
   "scripts": {
-    "build": "node getimages.mjs",
-    "start": "static-server",
-    "publish": "node publish && cd dist && aws s3 sync . s3://mcaron-storage-boxes"
+    "start": "static-server dist"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pkmnfrk/storage_box.git"
-  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cli-progress": "^3.11.2",
-    "node-fetch": "^3.2.10",
-    "p-limit": "^4.0.0",
-    "spritesmith": "^3.4.0"
-  },
-  "devDependencies": {
     "glob": "^8.0.3",
-    "static-server": "^2.2.1"
+    "node-fetch-cache": "^3.0.5",
+    "p-limit": "^4.0.0",
+    "pokedex-promise-v2": "^4.0.0",
+    "spritesmith": "^3.4.0",
+    "static-server": "^2.2.1",
+    "underscore": "^1.13.4"
   }
 }

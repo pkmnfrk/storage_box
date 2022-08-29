@@ -1,12 +1,13 @@
 <!doctype html>
 <html>
 	<head>
+        <meta charset="utf-8">
 		<meta name="viewport" content="width=850" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
         
         <title>Pok&eacute;mon Boxes</title>
 		<link href="boxes.css" rel="stylesheet" />
-		<link href="images.css" rel="stylesheet" />
+		<link href="pokemon.css" rel="stylesheet" />
         <link rel="apple-touch-icon" sizes="60x60" href="images/pokemon_60.png" />
         <link rel="apple-touch-icon" sizes="76x76" href="images/pokemon_76.png" />
         <link rel="apple-touch-icon" sizes="120x120" href="images/pokemon_120.png" />
@@ -14,12 +15,8 @@
         
 	</head>
 	<body id="body">
-		<div id="stats">
-			<div id="statText"></div>
-			<a href="#" onclick="document.getElementById('savecode').style.display='block';this.style.display='none';return false;">Save/Load</a>
-			<div id="savecode" style="display:none">Save Code: <input id="save" /></div>
-		</div>
-        <script src="pokedex.js"></script>
-		<script src="boxes.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
+{{content}}
+        
 	</body>
 </html>
