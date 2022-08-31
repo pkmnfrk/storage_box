@@ -158,6 +158,9 @@ async function writeHtmlFiles(pokedexes) {
     await writeIndexFile(pokedexes);
 
     for(const dex of pokedexes) {
+        bar.update(null, {
+            thing: "Dex: " + dex.name,
+        })
         await writeHtmlFile(dex);
         bar.increment();
     }
@@ -197,6 +200,16 @@ async function writeHtmlFile(dex) {
     const size = dex.name in box_overrides ? box_overrides[dex.name].size : 30;
     const width = dex.name in box_overrides ? box_overrides[dex.name].width : 6;
 
+    let relevantVersions = [];
+    for(const group of dex.version_groups) {
+        /** @type {import("pokedex-promise-v2").VersionGroup}*/
+        let versionGroup = await pokemon.get(group.url);
+        for(const v of versionGroup.versions) {
+            relevantVersions[v.name] = await pokemon.get(v.url);
+        }
+    }
+    
+
     let start = 1;
     let end = size;
     {
@@ -215,13 +228,46 @@ async function writeHtmlFile(dex) {
         
         contents += `<table data-start="${start}" data-end="${Math.min(end, dex.pokemon_entries.length)}">\n`;
         contents += `<caption>${start} - ${Math.min(end, dex.pokemon_entries.length)} <div class="check"></div></caption>\n`;
+
+
         
         for(const row of chunk(table, width)) {
             contents += `<tr>\n`;
             for(const c of row) {
                 const mon = await pokemon.species(c.pokemon_species.name);
                 const name = getEnglish(mon.names).name;
-                contents += `<td data-id="${c.entry_number}"><div class="pokemon p${mon.id}"></div><br>#${c.entry_number} ${name}</td>\n`;
+
+                let encounterText = Object.fromEntries(Object.keys(relevantVersions).map(v => [v, []]));
+
+                if(dex.name != "national") {
+                    const encounters = await pokemon.encounters(mon.id);
+                    for(const encounter of encounters) {
+                        for(const v of encounter.version_details) {
+                            if(!isRelevantEncounter(v, relevantVersions)) {
+                                continue;
+                            }
+
+                            /** @type {import("pokedex-promise-v2").LocationArea} */
+                            const location = await pokemon.get(encounter.location_area.url);
+                            encounterText[v.version.name].push(await getLocationName(location));
+                        }
+                    }
+                }
+
+                let finalEncounterText = "";
+                {
+                    const tmp = [];
+                    for(const version of Object.keys(relevantVersions)) {
+                        if(encounterText[version].length) {
+                            tmp.push(`${getEnglish(relevantVersions[version].names).name}: ${encounterText[version].join(", ")}`);
+                        }
+                    }
+                    if(tmp.length) {
+                        finalEncounterText = `title="${tmp.join("\n")}"`;
+                    }
+                }
+
+                contents += `<td data-id="${c.entry_number}" ${finalEncounterText}><div class="pokemon p${mon.id}"></div><br>#${c.entry_number} ${name}</td>\n`;
             }
 
             if(end > dex.pokemon_entries.length) {
@@ -284,4 +330,30 @@ async function copyStaticFiles() {
 
 function getEnglish(list) {
     return list.filter(n => n.language.name == "en")[0];
+}
+
+/**
+ * 
+ * @param {import("pokedex-promise-v2").PokemonEncounterVersionDetailObject} encounter
+ * @param {object} versions
+ */
+function isRelevantEncounter(encounter, versions) {
+    return encounter.version.name in versions;
+}
+
+/**
+ * 
+ * @param {import("pokedex-promise-v2").LocationArea} locationArea
+ * @return {Promise<string>}
+ */
+async function getLocationName(locationArea) {
+    /** @type {import("pokedex-promise-v2").Location} */
+    const location = await pokemon.get(locationArea.location.url);
+    let ret = getEnglish(location.names).name;
+
+    const areaEng = getEnglish(locationArea.names);
+    if(areaEng && areaEng.name) {
+        ret += ": " + areaEng.name;
+    }
+    return ret;
 }

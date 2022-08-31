@@ -1,11 +1,15 @@
 // import { Pokedex, PokemonSpecies } from "pokedex-promise-v2/types";
 
+const BASE_URL = "https://pokeapi.co/api/v2";
+
 export default class Pokemon {
     constructor(fetch) {
         this.fetch = fetch;
         this.cache = {
+            urls: {},
             species: {},
             pokedexes: {},
+            encounters: {},
         }
     }
 
@@ -14,11 +18,7 @@ export default class Pokemon {
      * @returns {import("pokedex-promise-v2").PokemonSpecies}
      */
     async species(id) {
-        if(!(id in this.cache.species)) {
-            this.cache.species[id] = await this.get(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
-        }
-        
-        return this.cache.species[id];
+        return await this.get(`${BASE_URL}/pokemon-species/${id}/`);
     }
 
     /**
@@ -26,22 +26,39 @@ export default class Pokemon {
      * @returns {import("pokedex-promise-v2").Pokedex}
      */
     async pokedex(id) {
-        if(!(id in this.cache.pokedexes)) {
-            this.cache.pokedexes[id] = await this.get(`https://pokeapi.co/api/v2/pokedex/${id}/`);
-        }
+        return await this.get(`${BASE_URL}/pokedex/${id}/`);
+    }
 
-        return this.cache.pokedexes[id];
+    /**
+     * 
+     * @param {integer} id 
+     * @returns {import("pokedex-promise-v2").PokemonEncounter[]}
+     */
+    async encounters(id) {
+        return await this.get(`${BASE_URL}/pokemon/${id}/encounters`);
+    }
+
+    /**
+     * 
+     * @param {integer} id 
+     * @returns {import("pokedex-promise-v2").LocationArea}
+     */
+    async location(id) {
+        return await this.get(`${BASE_URL}/location-area/${id}`);
     }
 
     /**
      * @returns {import("pokedex-promise-v2").NamedAPIResource[]}
      */
     async pokedexes() {
-        return await this.getMany(`https://pokeapi.co/api/v2/pokedex/`);
+        return await this.getMany(`${BASE_URL}/pokedex/`);
     }
 
     async get(url) {
-        return await (await this.fetch(url)).json();
+        if(!(url in this.cache.urls)) {
+            this.cache.urls[url] = await (await this.fetch(url)).json();
+        }
+        return this.cache.urls[url];
     }
 
     async getMany(url) {
