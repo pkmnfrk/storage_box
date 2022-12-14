@@ -1,4 +1,4 @@
-import { fetchBuilder, FileSystemCache } from "node-fetch-cache";
+import {fetch} from "./fetcher.mjs";
 import cliProgress from "cli-progress";
 import pLimit from "p-limit";
 import Spritesmith from "spritesmith";
@@ -8,6 +8,7 @@ import {chunk} from "underscore";
 import glob from "glob";
 import path from "path";
 
+import { getEnglish } from "./util.mjs";
 
 const fsp = fs.promises;
 
@@ -36,11 +37,7 @@ try {
 
 const template = await fsp.readFile("./template.html", "utf-8");
 
-const fetch = fetchBuilder.withCache(new FileSystemCache({
-    cacheDirectory: "./cache",
-}));
-
-const pokemon = new Pokemon(fetch);
+const pokemon = new Pokemon();
 
 const bar = new cliProgress.SingleBar({}, cliProgress.Presets.legacy);
 let progressTotal = 4; // data + pokedexes + gen sprites + gen css
@@ -326,10 +323,6 @@ async function copyStaticFiles() {
         await fsp.copyFile(file, newFile);
         bar.increment();
     }
-}
-
-function getEnglish(list) {
-    return list.filter(n => n.language.name == "en")[0];
 }
 
 /**

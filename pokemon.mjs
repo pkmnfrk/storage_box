@@ -1,15 +1,13 @@
+import {fetch, evict} from "./fetcher.mjs";
 // import { Pokedex, PokemonSpecies } from "pokedex-promise-v2/types";
 
-const BASE_URL = "https://pokeapi.co/api/v2";
+//const BASE_URL = "https://pokeapi.co/api/v2";
+const BASE_URL = "http://localhost:8000/api/v2";
 
 export default class Pokemon {
-    constructor(fetch) {
-        this.fetch = fetch;
+    constructor() {
         this.cache = {
             urls: {},
-            species: {},
-            pokedexes: {},
-            encounters: {},
         }
     }
 
@@ -54,9 +52,24 @@ export default class Pokemon {
         return await this.getMany(`${BASE_URL}/pokedex/`);
     }
 
+    /**
+     * 
+     * @returns {import("pokedex-promise-v2").NamedAPIResource[]}
+     */
+    async allSpecies() {
+        return await this.getMany(`${BASE_URL}/pokemon-species/`);
+    }
+
     async get(url) {
         if(!(url in this.cache.urls)) {
-            this.cache.urls[url] = await (await this.fetch(url)).json();
+            let response = await fetch(url);
+            
+            if(response.status !== 200) {
+                await response.ejectFromCache();
+                response = await fetch(url);
+            }
+
+            this.cache.urls[url] = await response.json();
         }
         return this.cache.urls[url];
     }
