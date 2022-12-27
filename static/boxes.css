@@ -2,32 +2,32 @@ table {
 	border: 3px gray outset;
 	zoom: 1;
 	float: left;
-    margin-bottom: 15px;
-    border-collapse: collapse;
+	margin-bottom: 15px;
+	border-collapse: collapse;
 }
 
 table caption {
-    height: 16px;
+	height: 16px;
 }
 
 td {
 
-	position:relative;
+	position: relative;
 	text-align: center;
 	vertical-align: middle;
 	width: 68px;
 	height: 90px;
 	padding: 0;
 	margin: 0;
-    font-family: "Helvetica Neue", "Helvetica", sans-serif;
-    font-size: 8px;
-    overflow: visible;
-    
-    user-select: none;
-    -webkit-user-select:none;
+	font-family: "Helvetica Neue", "Helvetica", sans-serif;
+	font-size: 8px;
+	overflow: visible;
 
-    background: linear-gradient(-45deg, #bbb 0%,#eee 100%);
-    
+	user-select: none;
+	-webkit-user-select: none;
+
+	background: linear-gradient(-45deg, #bbb 0%, #eee 100%);
+
 }
 
 input {
@@ -42,38 +42,38 @@ input {
 	position: fixed;
 	right: 0;
 	*/
-	
+
 	font-size: 14px;
 	font-family: Verdana, Arial;
-	
+
 }
 
 .gen1 {
-	background: linear-gradient(-45deg, #cc6 0%,#ff8 100%);
+	background: linear-gradient(-45deg, #cc6 0%, #ff8 100%);
 }
 
 .gen2 {
-	background: linear-gradient(-45deg, #77f 0%,#bbf 100%);
+	background: linear-gradient(-45deg, #77f 0%, #bbf 100%);
 }
 
 .gen3 {
-	background: linear-gradient(-45deg, #4b4 0%,#8f8 100%);
+	background: linear-gradient(-45deg, #4b4 0%, #8f8 100%);
 }
 
 .gen4 {
-	background: linear-gradient(-45deg, #ddf 0%,#99b 100%);
+	background: linear-gradient(-45deg, #ddf 0%, #99b 100%);
 }
 
 .gen5 {
-	background: linear-gradient(-45deg, #888 0%,#fff 100%);
+	background: linear-gradient(-45deg, #888 0%, #fff 100%);
 }
 
 .gen6 {
-	background: linear-gradient(-45deg, #f88 0%,#88f 100%);
+	background: linear-gradient(-45deg, #f88 0%, #88f 100%);
 }
 
 .gen7 {
-	background: linear-gradient(-45deg, #a9f 0%,#fa8 100%);
+	background: linear-gradient(-45deg, #a9f 0%, #fa8 100%);
 }
 
 .gen8 {
@@ -81,32 +81,37 @@ input {
 }
 
 .special {
-	background: linear-gradient(-45deg, #b48400 0%,#ffe8b6 100%) !important;
+	background: linear-gradient(-45deg, #b48400 0%, #ffe8b6 100%) !important;
 }
 
 .check {
 	display: none !important;
-    background-image: url("images/check.png");
-    width: 16px;
-    height: 16px;
-    vertical-align: text-top;
+	background-image: url("images/check.png");
+	width: 16px;
+	height: 16px;
+	vertical-align: text-top;
 }
 
-.pokemon, .empty { width: 68px; height: 56px;}
+.pokemon,
+.empty {
+	width: 68px;
+	height: 56px;
+}
 
 .pokemon {
-	opacity: 0.2;
+	opacity: 0.3;
 }
 
-.gotten > .pokemon {
+.gotten>.pokemon {
 	opacity: 1;
 }
 
-table.gotten caption .check, td.gotten > .check {
+table.gotten caption .check,
+td.gotten>.check {
 	display: inline-block !important;
-	
+
 }
 
 caption {
-    position:relative;
+	position: relative;
 }

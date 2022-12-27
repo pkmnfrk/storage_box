@@ -25,6 +25,8 @@ const box_overrides = {
     }
 };
 
+const include_encounters = false;
+
 const now = Date.now().toString();
 
 try {
@@ -37,28 +39,34 @@ try {
 
 const template = await fsp.readFile("./template.html", "utf-8");
 
-const pokemon = new Pokemon();
+const pokemonApi = new Pokemon();
 
-const bar = new cliProgress.SingleBar({}, cliProgress.Presets.legacy);
-let progressTotal = 4; // data + pokedexes + gen sprites + gen css
+const bar = new cliProgress.SingleBar({
+    format: "progress [{bar}] {percentage}% | {value}/{total} | {step}"
+}, cliProgress.Presets.legacy);
+let progressTotal = 5; // data + pokedexes + pokemon + gen sprites + gen css
 
 bar.start(progressTotal, 0);
 
 await copyStaticFiles();
 
-const pokedex = await (await fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.json")).json();
-
-const ids = Object.keys(pokedex);
-ids.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-
-bar.increment();
+bar.increment({"step": "Downloading Pokedexes..."});
 
 const pokedexes = await getAllPokedexes();
 
+bar.increment(0, {"step": "Downloading pokemon..."});
+
+const pokemon = await getAllPokemon();
+
+bar.increment(0, {"step": "Downloading sprites..."});
+
 const sprites = await downloadSprites(bar);
+bar.increment(0, {"step": "Building spritesheet..."});
 const spritesheet = await buildSpritesheet(sprites);
 
+bar.increment(0, {"step": "Writing CSS..."});
 await writeCss(spritesheet);
+
 await writeHtmlFiles(pokedexes);
 
 bar.stop();
@@ -71,37 +79,82 @@ function addProgress(p) {
 async function downloadSprites() {
     const fetches = [];
     
-    addProgress(ids.length);
+    // const pokedex = await (await fetch("https://raw.githubusercontent.com/msikma/pokesprite/master/data/pokemon.json")).json();
+
+    // for(const pid of Object.keys(pokedex)) {
+    //     const newPid = (parseInt(pid, 10)).toString();
+
+    //     if(newPid != pid) {
+    //         pokedex[newPid] = pokedex[pid];
+    //         delete pokedex[pid];
+    //     }
+    // }
+
+    // const ids = Object.keys(pokedex);
+    // ids.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+    // addProgress(ids.length);
+
+    const work = [
+        ...Object.values(pokemon).map(mon => ({
+            url: `https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/${mon.name}.png`,
+            filename: `${mon.id}.png`,
+            name: mon.name,
+        })),
+        {
+            url: `https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/unknown-gen5.png`,
+            filename: "0.png",
+            name: "unknown",
+        }
+    ];
+
+    addProgress(work.length);
 
     const limiter = pLimit(4);
-    for(const key of ids) {
-        fetches.push(limiter(async (key) => {
+    for(const item of work) {
+        fetches.push(limiter(async () => {
             try {
-                await fsp.access(path, fs.constants.R_OK);
-            } catch(e) {
-                const filename = `${pokedex[key].slug.eng}.png`;
-                const url = `https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/${filename}`;
-                const result = await fetch(url);
-                const blob = await result.blob();
-                const buffer = blob.stream()
+                const result = await fetch(item.url);
+                
+                if(result.status == 200) {
+                    const blob = await result.blob();
+                    const buffer = blob.stream()
 
-                const ret = new Vinyl({
-                    path: parseInt(key, 10).toString() + ".png",
-                    contents: buffer,
-                });
+                    return new Vinyl({
+                        path: item.filename,
+                        contents: buffer,
+                    });
+                }
 
-                return ret;
+                
+                // no sprite, try a fallback in extra sprites
+                const extra_sprites = await fs.promises.readdir("extra_sprites/icon", { withFileTypes:false , encoding: "utf-8" });
+
+                for(const spr of extra_sprites) {
+                    const ns = spr.toLowerCase().replace(/ /g, "-").replace(".png", "");
+                    if(ns === item.name || ns === item.name + "-paldea"){
+                        return new Vinyl({
+                            path: item.filename,
+                            contents: await fs.promises.readFile("extra_sprites/icon/" + spr),
+                        })
+                    }
+                }
+
+                console.log("Warning: No sprite for", item.name);
+
             } finally {
                 bar.increment();
             }
-        }, key));
+        }));
     }
 
-    return await Promise.all(fetches);
+    const ret = (await Promise.all(fetches)).filter(x => x);
+
+    return ret;
 }
 
 async function getAllPokedexes() {
-    const pokedexList = await pokemon.pokedexes();
+    const pokedexList = await pokemonApi.pokedexes();
     bar.increment();
 
     addProgress(pokedexList.length);
@@ -109,12 +162,41 @@ async function getAllPokedexes() {
     const results = [];
 
     for(const dex of pokedexList) {
-        const actualDex = await pokemon.pokedex(dex.name);
+        const actualDex = await pokemonApi.pokedex(dex.name);
         if(actualDex.is_main_series) {
-            results.push(actualDex);
+            results.push({
+                ...actualDex,
+                filename: actualDex.name,
+            });
         }
         bar.increment(1);
     }
+
+    //gross hax: inject a Fire Red / Leaf Green dex
+    const frlg = {
+        ...results[1],
+        id: 999,
+        // name: "frlg",
+        names: [
+            {
+                language: {
+                    name: "en",
+                },
+                name: "FireRed/LeafGreen Kanto dex",
+            }
+        ],
+        descriptions: [
+            {
+                language: {
+                    name: "en",
+                },
+                description: "FireRed/LeafGreen Kanto dex (same as R/B/Y, but with 30 slots per box)",
+            }
+        ],
+        filename: "frlg",
+    };
+
+    results.splice(4, 0, frlg);
 
     return results;
 }
@@ -142,6 +224,9 @@ async function writeCss(spritesheet) {
     for(const key of Object.keys(spritesheet.coordinates)) {
         const c = spritesheet.coordinates[key];
         const match = /^(\d+)\.png$/.exec(key);
+        if(!match) {
+            debugger
+        }
         css += `.p${match[1]}{background-position:${-c.x}px ${-c.y}px;}\n`;
     }
 
@@ -155,10 +240,11 @@ async function writeHtmlFiles(pokedexes) {
     await writeIndexFile(pokedexes);
 
     for(const dex of pokedexes) {
-        bar.update(null, {
-            thing: "Dex: " + dex.name,
-        })
-        await writeHtmlFile(dex);
+        bar.increment(0, {"step": "Building Dex " + dex.name + "..."});
+
+        const size_override = dex.name in box_overrides && dex.id < 999 ? box_overrides[dex.name] : null;
+
+        await writeHtmlFile(dex, size_override);
         bar.increment();
     }
 }
@@ -172,9 +258,9 @@ async function writeIndexFile(pokedexes) {
 
     contents += `<ul>\n`;
     for(const dex of pokedexes) {
-        const name = getEnglish(dex.names).name;
-        const desc = getEnglish(dex.descriptions).description;
-        contents += `<li><a href="${dex.name}.html">${desc || name}</a></li>`;
+        const name = getEnglish(dex.names, {name:dex.id}).name;
+        const desc = getEnglish(dex.descriptions, {description:""}).description;
+        contents += `<li><a href="${dex.filename}.html">${desc || name}</a></li>`;
     }
     contents += `</ul>\n`;
 
@@ -192,79 +278,91 @@ async function writeIndexFile(pokedexes) {
  * 
  * @param {import("pokedex-promise-v2").Pokedex} dex
  */
-async function writeHtmlFile(dex) {
+async function writeHtmlFile(dex, size_override) {
     let contents = "";
-    const size = dex.name in box_overrides ? box_overrides[dex.name].size : 30;
-    const width = dex.name in box_overrides ? box_overrides[dex.name].width : 6;
+    const size = size_override ? size_override.size : 30;
+    const width = size_override ? size_override.width : 6;
+
+    bar.increment(0, {"step": dex.name + " dex - Fetching version groups"});
 
     let relevantVersions = [];
-    for(const group of dex.version_groups) {
-        /** @type {import("pokedex-promise-v2").VersionGroup}*/
-        let versionGroup = await pokemon.get(group.url);
-        for(const v of versionGroup.versions) {
-            relevantVersions[v.name] = await pokemon.get(v.url);
+    if(include_encounters) {
+        for(const group of dex.version_groups) {
+            /** @type {import("pokedex-promise-v2").VersionGroup}*/
+            let versionGroup = await pokemonApi.get(group.url);
+            for(const v of versionGroup.versions) {
+                relevantVersions[v.name] = await pokemonApi.get(v.url);
+            }
         }
     }
+
+    bar.increment(0, {"step": dex.name + " dex - Writing chunks"});
     
+
+    const dexPokemon = Object.values(pokemon).filter(p => p.pokedex_numbers[dex.name]);
+    dexPokemon.sort((a, b) => a.pokedex_numbers[dex.name] - b.pokedex_numbers[dex.name]);
 
     let start = 1;
     let end = size;
+    
     {
-        const name = getEnglish(dex.names).name;
-        const desc = getEnglish(dex.descriptions).description;
+        const name = getEnglish(dex.names, {name: dex.name}).name;
+        const desc = getEnglish(dex.descriptions, {description: ""}).description;
 
         contents += `<h1>${name}</h1>\n`;
         if(desc) {
             contents += `<p>${desc}</p>`;
         }
         contents += `<p><a id="back" href="./">Back</a></p>\n`;
+
+        contents += `<p>Completion: <span id="completion_num"></span>/<span id="total_pokemon">${dexPokemon.length}</span> (<span id="completion_perc"></span>%)</p>`
+        contents += `<p>Boxes Complete: <span id="box_num"></span>/${Math.ceil(dexPokemon.length / size)}</p>`
     }
 
-    contents += `<div id="dex" data-dex="${dex.name}">`;
-    for(const table of chunk(dex.pokemon_entries, size)) {
+    contents += `<div id="dex" data-dex="${dex.filename}">`;
+    for(const table of chunk(dexPokemon, size)) {
         
-        contents += `<table data-start="${start}" data-end="${Math.min(end, dex.pokemon_entries.length)}">\n`;
-        contents += `<caption>${start} - ${Math.min(end, dex.pokemon_entries.length)} <div class="check"></div></caption>\n`;
+        contents += `<table data-start="${start}" data-end="${Math.min(end, dexPokemon.length)}">\n`;
+        contents += `<caption>${start} - ${Math.min(end, dexPokemon.length)} <div class="check"></div></caption>\n`;
 
+        bar.increment(0, {"step": dex.name + " dex - Writing chunk " + start + " - " + end + "..."});
 
-        
         for(const row of chunk(table, width)) {
             contents += `<tr>\n`;
-            for(const c of row) {
-                const mon = await pokemon.species(c.pokemon_species.name);
-                const name = getEnglish(mon.names).name;
+            for(const mon of row) {
 
                 let encounterText = Object.fromEntries(Object.keys(relevantVersions).map(v => [v, []]));
 
-                if(dex.name != "national") {
-                    const encounters = await pokemon.encounters(mon.id);
-                    for(const encounter of encounters) {
-                        for(const v of encounter.version_details) {
-                            if(!isRelevantEncounter(v, relevantVersions)) {
-                                continue;
-                            }
+                // if(dex.name != "national" && include_encounters) {
+                //     const encounters = await pokemonApi.encounters(mon.id);
+                //     for(const encounter of encounters) {
+                //         for(const v of encounter.version_details) {
+                //             if(!isRelevantEncounter(v, relevantVersions)) {
+                //                 continue;
+                //             }
 
-                            /** @type {import("pokedex-promise-v2").LocationArea} */
-                            const location = await pokemon.get(encounter.location_area.url);
-                            encounterText[v.version.name].push(await getLocationName(location));
-                        }
-                    }
-                }
+                //             /** @type {import("pokedex-promise-v2").LocationArea} */
+                //             const location = await pokemonApi.get(encounter.location_area.url);
+                //             encounterText[v.version.name].push(await getLocationName(location));
+                //         }
+                //     }
+                // }
 
                 let finalEncounterText = "";
-                {
-                    const tmp = [];
-                    for(const version of Object.keys(relevantVersions)) {
-                        if(encounterText[version].length) {
-                            tmp.push(`${getEnglish(relevantVersions[version].names).name}: ${encounterText[version].join(", ")}`);
-                        }
-                    }
-                    if(tmp.length) {
-                        finalEncounterText = `title="${tmp.join("\n")}"`;
-                    }
-                }
+                // {
+                //     const tmp = [];
+                //     for(const version of Object.keys(relevantVersions)) {
+                //         if(encounterText[version].length) {
+                //             tmp.push(`${getEnglish(relevantVersions[version].names).name}: ${encounterText[version].join(", ")}`);
+                //         }
+                //     }
+                //     if(tmp.length) {
+                //         finalEncounterText = `title="${tmp.join("\n")}"`;
+                //     }
+                // }
 
-                contents += `<td data-id="${c.entry_number}" ${finalEncounterText}><div class="pokemon p${mon.id}"></div><br>#${c.entry_number} ${name}</td>\n`;
+                const dexId = mon.pokedex_numbers[dex.name];
+                contents += `<td data-id="${dexId}" ${finalEncounterText}><div class="pokemon p${mon.id}"></div><br>#${dexId} ${mon.english_name}</td>\n`;
             }
 
             if(end > dex.pokemon_entries.length) {
@@ -302,7 +400,9 @@ async function writeHtmlFile(dex) {
     contents += `<script src="boxes.js?v=${now}"></script>`;
 
     let finalHtml = template.replace(/\.css/g, ".css?v=" + now).replace("{{content}}", contents);
-    await fsp.writeFile(`dist/${dex.name}.html`, finalHtml, "utf-8");
+
+    bar.increment(0, {"step": dex.name + " dex - Writing file"});
+    await fsp.writeFile(`dist/${dex.filename}.html`, finalHtml, "utf-8");
 }
 
 async function copyStaticFiles() {
@@ -341,7 +441,7 @@ function isRelevantEncounter(encounter, versions) {
  */
 async function getLocationName(locationArea) {
     /** @type {import("pokedex-promise-v2").Location} */
-    const location = await pokemon.get(locationArea.location.url);
+    const location = await pokemonApi.get(locationArea.location.url);
     let ret = getEnglish(location.names).name;
 
     const areaEng = getEnglish(locationArea.names);
@@ -349,4 +449,39 @@ async function getLocationName(locationArea) {
         ret += ": " + areaEng.name;
     }
     return ret;
+}
+
+/** 
+ * @typedef PokemonSpecies
+ * @property {number} id
+ * @property {boolean} is_legendary
+ * @property {Object.<string, number>} pokedex_numbers
+ * @property {string} name
+ * @property {string} english_name
+ */
+
+async function getAllPokemon() {
+    const list = await pokemonApi.allSpecies();
+
+    const limit = pLimit(4);
+
+    const fetches = list.map(l => limit(async () => {
+        /** @type {import("pokedex-promise-v2").PokemonSpecies} */
+        const data = await pokemonApi.get(l.url);
+
+        return [data.name, {
+            id: data.id,
+            name: data.name,
+            is_legendary: data.is_legendary || data.is_mythical,
+            pokedex_numbers: Object.fromEntries(data.pokedex_numbers.map((dn) => {
+                return [dn.pokedex.name, dn.entry_number]
+            })),
+            english_name: getEnglish(data.names, { name: data.name }).name,
+        }];
+    }))
+
+    /** @type {Object.<string, PokemonSpecies>} */
+    const data = Object.fromEntries(await Promise.all(fetches));
+
+    return data;
 }

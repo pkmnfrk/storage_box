@@ -3,6 +3,9 @@ const dexId = dex.data("dex");
 
 const localDex = loadLocalDex(dexId);
 
+const gottenBoxes = [];
+const pokemonCount = parseInt($("#total_pokemon").text(), 10);
+
 // localStorage["dex-latest"] = dexId;
 
 for(let i = 0; i < localDex.length; i++) {
@@ -14,6 +17,8 @@ for(let i = 0; i < localDex.length; i++) {
 for(const table of $("table")) {
     adjustGottenStatus(table);
 }
+
+updateStats();
 
 // $("#back").on("click", () => {
 //     window.localStorage["dex-latest"] = "";
@@ -34,6 +39,7 @@ dex.on("click", "td", function(e) {
     adjustGottenStatus(table);
 
     writeLocalDex(dexId, localDex);
+    updateStats();
 });
 
 function adjustGottenStatus(table) {
@@ -47,8 +53,14 @@ function adjustGottenStatus(table) {
     
     if(allGotten) {
         $(table).addClass("gotten");
+        if(gottenBoxes.indexOf(start) == -1) {
+            gottenBoxes.push(start);
+        }
     } else {
         $(table).removeClass("gotten");
+        if(gottenBoxes.indexOf(start) !== -1) {
+            gottenBoxes.splice(gottenBoxes.indexOf(start), 1);
+        }
     }
 }
 
@@ -126,4 +138,14 @@ function writeRle(data) {
     }
 
     return ret;
+}
+
+function updateStats() {
+    let havePokemon = localDex.filter(x => x).length;
+    let perc = Math.floor(havePokemon / pokemonCount * 1000) / 10;
+    
+    $("#completion_num").text(havePokemon.toString());
+    $("#completion_perc").text(perc.toString());
+    $("#box_num").text(gottenBoxes.length);
+
 }
